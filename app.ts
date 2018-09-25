@@ -16,7 +16,7 @@ const PORT = process.env.PORT || 4040;
 const HOST = process.env.HOST || 'localhost';
 
 (async () => {
-    await sequelize.sync({ force: true });
+    await sequelize.sync();
     console.info('Sequelize synced');
     await GenerateStocks.initStocks();
 

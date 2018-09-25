@@ -9,9 +9,6 @@ export class StocksPortfolioController {
     async checkIfInStocksPortfolio(@Param("name") name: string, @Res() response: Response) {
         let stockInPortfolioByName: StockInStockPortfolio;
         stockInPortfolioByName = await this.getStockInPortfolioDB(name);
-        /*await this.getStockInPortfolioDB(name).then(x => {
-            stockInPortfolioByName = x;
-        });*/
         return response.send(stockInPortfolioByName);
     }
 
