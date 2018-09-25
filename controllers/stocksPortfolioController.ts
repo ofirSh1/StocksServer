@@ -42,10 +42,7 @@ export class StocksPortfolioController {
                 stockInPortfolioByName.buyingPrice = this.calculateAvgPrice(stockInPortfolioByName, bodyJson.stockQuantity, bodyJson.stock.currentPrice);
                 stockInPortfolioByName.gainLoss = this.calculateGainLoss(stockInPortfolioByName, bodyJson.stockQuantity, stockInPortfolioByName.currentPrice);
                 stockInPortfolioByName.quantity += bodyJson.stockQuantity;
-                StockInStockPortfolio.update({
-                    currentPrice: stockInPortfolioByName.currentPrice, buyingPrice: stockInPortfolioByName.buyingPrice,
-                    quantity: stockInPortfolioByName.quantity, gainLoss: stockInPortfolioByName.gainLoss
-                }, { where: { name } });
+                this.updateStockInPortfolio(stockInPortfolioByName);
             }
             else {
                 stockInPortfolioByName = new StockInStockPortfolio({ name, buyingPrice: bodyJson.stock.currentPrice, currentPrice: bodyJson.stock.currentPrice, quantity: bodyJson.stockQuantity, gainLoss: 0 });
@@ -78,10 +75,7 @@ export class StocksPortfolioController {
                     stockInPortfolioByName.quantity -= bodyJson.stockQuantity;
                     stockInPortfolioByName.gainLoss = this.calculateGainLoss(stockInPortfolioByName, bodyJson.stockQuantity, stockInPortfolioByName.currentPrice)
                     stockInPortfolioByName.currentPrice = bodyJson.stock.currentPrice;
-                    StockInStockPortfolio.update({
-                        currentPrice: stockInPortfolioByName.currentPrice, buyingPrice: stockInPortfolioByName.buyingPrice,
-                        quantity: stockInPortfolioByName.quantity, gainLoss: stockInPortfolioByName.gainLoss
-                    }, { where: { name } });
+                    this.updateStockInPortfolio(stockInPortfolioByName);
                 }
                 const stockInHistory = new StockHistory({ name, buyOrSell: 'Sell', price: stockInPortfolioByName.currentPrice, quantity: bodyJson.stockQuantity });
                 stockInHistory.save();
@@ -92,5 +86,12 @@ export class StocksPortfolioController {
             response.status(500);
             return response.send('Stock no longer exists in your stock portfolio');
         }
+    }
+
+    private updateStockInPortfolio(stockInPortfolioByName: StockInStockPortfolio) {
+        StockInStockPortfolio.update({
+            currentPrice: stockInPortfolioByName.currentPrice, buyingPrice: stockInPortfolioByName.buyingPrice,
+            quantity: stockInPortfolioByName.quantity, gainLoss: stockInPortfolioByName.gainLoss
+        }, { where: { name } });
     }
 }

@@ -3,6 +3,7 @@ import { Sequelize } from "sequelize-typescript";
 import { Stock } from './models/stock';
 import { StockInStockPortfolio } from './models/stockInstockPortfolio';
 import { StockHistory } from './models/stockHistory';
+
 export const sequelize = new Sequelize({
     database: 'StocksDatabase',
     dialect: 'postgres',

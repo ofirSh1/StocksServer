@@ -5,15 +5,15 @@ import { StocksPortfolioController } from './controllers/stocksPortfolioControll
 import { sequelize } from "./data/db.connection";
 import { GenerateStocks } from "./generateStocks";
 
+let socket;
+const PORT = process.env.PORT || 4040;
+const HOST = process.env.HOST || 'localhost';
+
 const app = createExpressServer({
     cors: true,
     classTransformer: false,
     controllers: [StocksController, StocksPortfolioController]
 });
-
-let socket;
-const PORT = process.env.PORT || 4040;
-const HOST = process.env.HOST || 'localhost';
 
 (async () => {
     await sequelize.sync();
