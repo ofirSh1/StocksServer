@@ -42,7 +42,7 @@ export class StocksPortfolioController {
                 stockInPortfolioByName.buyingPrice = this.calculateAvgPrice(stockInPortfolioByName, bodyJson.stockQuantity, bodyJson.stock.currentPrice);
                 stockInPortfolioByName.gainLoss = this.calculateGainLoss(stockInPortfolioByName, bodyJson.stockQuantity, stockInPortfolioByName.currentPrice);
                 stockInPortfolioByName.quantity += bodyJson.stockQuantity;
-                this.updateStockInPortfolio(stockInPortfolioByName);
+                this.updateStockInPortfolio(name, stockInPortfolioByName);
             }
             else {
                 stockInPortfolioByName = new StockInStockPortfolio({ name, buyingPrice: bodyJson.stock.currentPrice, currentPrice: bodyJson.stock.currentPrice, quantity: bodyJson.stockQuantity, gainLoss: 0 });
@@ -52,6 +52,7 @@ export class StocksPortfolioController {
             stockInHistory.save();
             return response.send({ newStock: stockInPortfolioByName, newHistory: stockInHistory });
         } catch (e) {
+            console.log(e);
             response.status(500);
             return response.send('Stock no longer exists in your stock portfolio');
         }
@@ -75,7 +76,7 @@ export class StocksPortfolioController {
                     stockInPortfolioByName.quantity -= bodyJson.stockQuantity;
                     stockInPortfolioByName.gainLoss = this.calculateGainLoss(stockInPortfolioByName, bodyJson.stockQuantity, stockInPortfolioByName.currentPrice)
                     stockInPortfolioByName.currentPrice = bodyJson.stock.currentPrice;
-                    this.updateStockInPortfolio(stockInPortfolioByName);
+                    this.updateStockInPortfolio(name, stockInPortfolioByName);
                 }
                 const stockInHistory = new StockHistory({ name, buyOrSell: 'Sell', price: stockInPortfolioByName.currentPrice, quantity: bodyJson.stockQuantity });
                 stockInHistory.save();
@@ -88,7 +89,7 @@ export class StocksPortfolioController {
         }
     }
 
-    private updateStockInPortfolio(stockInPortfolioByName: StockInStockPortfolio) {
+    private updateStockInPortfolio(name: string, stockInPortfolioByName: StockInStockPortfolio) {
         StockInStockPortfolio.update({
             currentPrice: stockInPortfolioByName.currentPrice, buyingPrice: stockInPortfolioByName.buyingPrice,
             quantity: stockInPortfolioByName.quantity, gainLoss: stockInPortfolioByName.gainLoss
